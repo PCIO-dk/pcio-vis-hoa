@@ -1,0 +1,32 @@
+# Copyright (C) 2026 PCIO
+# This file is distributed under the GPL2 license.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PCIO VIS HOA 1.0.0\n"
+"Report-Msgid-Bugs-To: https://www.pcio.dk/\n"
+"POT-Creation-Date: 2026-06-10 21:31+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: pcio-vis-hoa\n"
+"X-Generator: Poedit 3.9\n"
+
+#: pcio-vis-hoa.php
+msgid "External address"
+msgstr ""
+
+#: pcio-vis-hoa.php
+msgid "Valid after"
+msgstr ""
+
+#: pcio-vis-hoa.php
+msgid "Valid before"
+msgstr ""
+
+#: pcio-vis-hoa.php
+msgid "Note"
+msgstr ""
