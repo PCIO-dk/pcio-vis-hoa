@@ -23,6 +23,51 @@ class PCIO_VIS_HOA_DB {
         return $wpdb->prefix . self::TABLE;
     }
 
+    /**
+     * Register the HOA member table with the core history service.
+     *
+     * @param array<string,array> $tables Existing history table definitions.
+     * @return array<string,array>
+     */
+    public static function history_tables( array $tables ): array {
+        $tables['hoa_members'] = [
+            'table'          => self::TABLE,
+            'pk'             => [ 'member_id' ],
+            'auto_increment' => false,
+            'label'          => __( 'HOA member fields', 'pcio-vis-hoa' ),
+            'title'          => [ self::class, 'history_title' ],
+            'weight'         => 4,
+            'large'          => [ 'note' ],
+            'fields'         => [
+                'ext_address'  => __( 'External address', 'pcio-vis-hoa' ),
+                'valid_after'  => __( 'Valid after', 'pcio-vis-hoa' ),
+                'valid_before' => __( 'Valid before', 'pcio-vis-hoa' ),
+                'note'         => __( 'Note', 'pcio-vis-hoa' ),
+            ],
+            'links'          => static function ( array $row ): array {
+                return [ 'member_id' => (int) ( $row['member_id'] ?? 0 ) ];
+            },
+        ];
+
+        return $tables;
+    }
+
+    /**
+     * Row title for HOA history entries.
+     *
+     * @param array<string,mixed> $row HOA row.
+     */
+    public static function history_title( array $row ): string {
+        if ( class_exists( 'PCIO_VIS_History_Tables' ) ) {
+            $title = PCIO_VIS_History_Tables::member_name( (int) ( $row['member_id'] ?? 0 ) );
+            if ( '' !== $title ) {
+                return $title;
+            }
+        }
+
+        return '#' . (int) ( $row['member_id'] ?? 0 );
+    }
+
     // ── Schema ────────────────────────────────────────────────────
 
     /**
@@ -90,24 +135,16 @@ class PCIO_VIS_HOA_DB {
      * Insert or update a member's HOA row.
      */
     public static function upsert( int $member_id, string $ext_address, ?string $valid_after, ?string $valid_before, string $note ): void {
-        global $wpdb;
-        $wpdb->query(
-            $wpdb->prepare(
-                'INSERT INTO %i
-                    (`member_id`, `ext_address`, `valid_after`, `valid_before`, `note`)
-                 VALUES (%d, %s, %s, %s, %s)
-                 ON DUPLICATE KEY UPDATE
-                    `ext_address`  = VALUES(`ext_address`),
-                    `valid_after`  = VALUES(`valid_after`),
-                    `valid_before` = VALUES(`valid_before`),
-                    `note`         = VALUES(`note`)',
-                self::table(),
-                $member_id,
-                $ext_address,
-                $valid_after,
-                $valid_before,
-                $note
-            )
+        PCIO_VIS_History::upsert(
+            'hoa_members',
+            [
+                'member_id'    => $member_id,
+                'ext_address'  => $ext_address,
+                'valid_after'  => $valid_after,
+                'valid_before' => $valid_before,
+                'note'         => $note,
+            ],
+            [ 'member_id' ]
         );
     }
 
@@ -115,7 +152,6 @@ class PCIO_VIS_HOA_DB {
      * Remove a member's HOA row (called when the core deletes the member).
      */
     public static function delete( int $member_id ): void {
-        global $wpdb;
-        $wpdb->delete( self::table(), [ 'member_id' => $member_id ], [ '%d' ] );
+        PCIO_VIS_History::delete( 'hoa_members', [ 'member_id' => $member_id ], [ '%d' ] );
     }
 }

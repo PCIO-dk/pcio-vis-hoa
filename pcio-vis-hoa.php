@@ -3,7 +3,7 @@
 Plugin Name:  PCIO VIS HOA
 Plugin URI:   https://www.pcio.dk/
 Description:  Extends PCIO VIS Member Event with HOA-specific member fields (external address, membership validity, and notes).
-Version:      1.0.0
+Version:      1.1.0
 Author:       PCIO
 Author URI:   https://www.pcio.dk
 Requires at least: 6.2
@@ -43,12 +43,13 @@ class PCIO_VIS_HOA {
     // ── Hooks ─────────────────────────────────────────────────────
 
     public static function register(): void {
-        add_action( 'admin_init',            [ self::class, 'install' ] );
-        add_action( 'pcio_me_member_deleted',[ self::class, 'on_member_deleted' ] );
-        add_filter( 'pcio_me_member_fields', [ self::class, 'add_fields' ] );
-        add_filter( 'pcio_me_member_row',    [ self::class, 'decorate_row' ] );
-        add_action( 'pcio_me_member_saved',  [ self::class, 'save_row' ], 10, 2 );
-        add_filter( 'pcio_me_members_list',  [ self::class, 'sort_by_id' ] );
+        add_action( 'admin_init',             [ self::class, 'install' ] );
+        add_action( 'pcio_me_member_deleted', [ self::class, 'on_member_deleted' ] );
+        add_filter( 'pcio_me_member_fields',  [ self::class, 'add_fields' ] );
+        add_filter( 'pcio_me_member_row',     [ self::class, 'decorate_row' ] );
+        add_action( 'pcio_me_member_saved',   [ self::class, 'save_row' ], 10, 2 );
+        add_filter( 'pcio_me_members_list',   [ self::class, 'sort_by_id' ] );
+        add_filter( 'pcio_me_history_tables', [ 'PCIO_VIS_HOA_DB', 'history_tables' ] );
     }
 
     // ── Field definitions ─────────────────────────────────────────
@@ -140,4 +141,3 @@ add_action( 'plugins_loaded', static function (): void {
     }
     PCIO_VIS_HOA::register();
 } );
-
